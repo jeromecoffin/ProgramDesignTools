@@ -26,6 +26,24 @@ void lecture(){
     
 }
 
+
+//Situer la premiere parenthese fermante
+int position_first_closed_parenthesis(char *array){
+    
+    int pos = 0;
+    
+    char temp = '0';
+    
+    while(temp != ')'){
+        
+        temp = *array+pos;
+        pos+=1;
+        
+    }
+    
+    return pos;
+}
+
 //addition
 int addition(int a, int b){
     return a+b;
