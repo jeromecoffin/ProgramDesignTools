@@ -11,6 +11,6 @@
 
 #include <stdio.h>
 
-void lecture();
+int exercice_8();
 
 #endif /* Exercise_8_hpp */

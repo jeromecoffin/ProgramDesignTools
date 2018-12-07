@@ -34,3 +34,12 @@ float exp(int x, int n){
     }
     return 1;
 }
+
+int exercice_7(){
+    
+    float exponential = 0;
+    exponential = exp(1, 20);
+    std::cout << exponential << std::endl;
+    
+    return 0;
+}

@@ -10,9 +10,12 @@
 #define Exercise_7_hpp
 
 #include <stdio.h>
+#include <iostream>
 
 double factorial(int n);
 double pow(int x, int n);
 float exp(int x, int n);
+
+int exercice_7();
 
 #endif /* Exercise_7_hpp */

@@ -15,12 +15,9 @@ using namespace std;
 //main function
 int main(int argc, const char * argv[]) {
 
-    //Exercise 7 : exponential
-    //float exponential = 0;
-    //exponential = exp(1, 20);
-    //cout << exponential << endl;
+
     
-    lecture();
+    //exercice_8();
     
     return 0;
 }
