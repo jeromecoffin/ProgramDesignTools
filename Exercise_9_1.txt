@@ -1,0 +1,48 @@
+//
+//  Exercise_9_1a.cpp
+//  ProgramDesignTools_TP
+//
+//  Created by Jérôme COFFIN on 21/12/2018.
+//  Copyright © 2018 Jérôme COFFIN. All rights reserved.
+//
+
+#include "Exercise_9_1a.hpp"
+
+A1 = A * 100 + 2 * B
+Vrai
+On a une affectation
+Du côté gauche A1 qui est un identificateur
+De l'autre côté une expression A * 100 + 2 * B
+L'expression est de deux facteurs
+A * 100 est un facteur d'un identificateur A et d'un nombre 100
+2 * B est un facteur d'un nombre 2 et d'un identificateur B
+--> Donc on affecte une expression de deux facteurs à un identificateur
+
+
+? A1 = B : C = D
+Vrai
+C'est une conditionnelle
+La condition A1 = B
+Affectation est C = D
+
+
+?A=3
+Faux
+ça ressemble à une conditionelle
+Cependant on ne lit qu'une condition
+Il n'y a pas d'affectation
+
+
+AB=32
+Faux
+on n'a pas d'affectation de 32 sur AB
+AB n'est pas un identificateur
+
+
+A = 2 ! 3
+Faux
+Ceci n'existe pas
+On a un identificateur et deux nombres
+
+
+

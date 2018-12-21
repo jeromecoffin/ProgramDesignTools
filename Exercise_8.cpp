@@ -9,8 +9,8 @@
 
 #include <iostream> //Standard input/output
 #include <stack> //Constructs a stack container adaptor object
-#include <vector> //Constructs a vector
-#include <string> //Constructs a String object
+#include <vector> //Construit un vecteur
+#include <string> //Construit un objet de type String
 #include <cstdlib> //Defines several general purpose functions
 #include <map> //Constructs a map (associative containers that store elements) container object
 #include <stdexcept> //Defines a set of standard exceptions
@@ -19,35 +19,39 @@
 //On utilise C++ pour la POO
 //On a un objet calculatrice qui admet des equations en NPI
 //Ces equations sont presentees sous forme de pile
-
-
-
-
-class Calculatrice;
-
-
-//represente un Token pour NPI
 // NPI : notation polonaise inverse
-struct BaseToken {
+
+
+
+class Calculatrice; //Objet calculatrice
+class NPIExpression; //Objet de forme NPI
+class ShuntingYard; //Objet avec les proprietes de Shunting Yard
+
+
+
+
+//represente une unite pour NPI
+struct BaseUnit {
     
     //BaseToken est une dependance de Calculatrice
     virtual void evaluer (Calculatrice *) = 0;
-    virtual ~BaseToken() {}
+    virtual ~BaseUnit() {}
     
 };
 
 
 
-//Les operateurs sont de type Token< char >
-//Les operands sont de type Token< double >
+//Les operateurs sont de type Unit< char >
+//Les operands sont de type Unit< double >
 //Template car on ne connait pas le format
-template< class Tok > class Token : public BaseToken {
+template< class U > class Unit : public BaseUnit {
     
-    Tok token_;
+    U unit_;
+    
 public:
-    //Permettre a la calculatrice d'utiliser un token
+    //Permettre a la calculatrice d'utiliser un unit
     void evaluer (Calculatrice  *c);
-    Token (Tok t) : token_(t) {}
+    Unit (U u) : unit_(u) {}
     
 };
 
@@ -58,21 +62,21 @@ public:
 
 class NPIExpression {
     
-    std::vector< BaseToken* > pile_;
+    std::vector< BaseUnit* > pile_;
     
 public:
-    /* Ajout d'un token */
-    void push (BaseToken *t) {
+    /* Ajout d'un unit */
+    void push (BaseUnit *u) {
         
-        pile_.push_back (t);
+        pile_.push_back (u);
         
     }
     
-    /* Utiliser le token suivent depuis le debut de l'expression */
-    BaseToken* pop () {
-        BaseToken *t = pile_.front ();
+    /* Utiliser le unit suivent depuis le debut de l'expression */
+    BaseUnit* pop () {
+        BaseUnit *u = pile_.front ();
         pile_.erase (pile_.begin ());
-        return t;
+        return u;
     }
     
     bool empty () const {
@@ -87,10 +91,10 @@ public:
 
 class ShuntingYard {
     
-    const std::string expr_;
+    const std::string expr_; //constante non modifiee
     NPIExpression npi_;
     std::stack< char > op_stack_;
-    mutable std::map< char, int > op_precedent_;
+    mutable std::map< char, int > op_precedent_; //permet de modifier sans alterer le const
     
     int precedent (char op) const {
         
@@ -110,17 +114,18 @@ class ShuntingYard {
     }
     
     //effectuer un push pour reset
-    void handle_left_paren () {
+    void gestion_parenthese_ouvrante () {
         
         op_stack_.push ('(');
         
     }
-    /* Consume all operators in current scope and restore previous scope */
-    void handle_right_paren () {
+    
+    //Ici meme operation pour parenthese fermante
+    void gestion_parenthese_fermante () {
         
         while ('(' != op_stack_.top ()) {
             
-            npi_.push (new Token< char >(op_stack_.top ()));
+            npi_.push (new Unit< char >(op_stack_.top ()));
             op_stack_.pop ();
             
         }
@@ -128,13 +133,13 @@ class ShuntingYard {
         op_stack_.pop ();
     }
     
-    /* Consume operators with precedence >= than op then add op */
-    void handle_op (char op) {
+    //Ici on lit la pile operateur et on push jusqu'au bout
+    void gestion_operateur (char op) {
         
         while (! op_stack_.empty () &&
                precedent (op) <= stack_precedent ()) {
             
-            npi_.push (new Token< char >(op_stack_.top ()));
+            npi_.push (new Unit< char >(op_stack_.top ()));
             op_stack_.pop ();
             
         }
@@ -142,51 +147,54 @@ class ShuntingYard {
         op_stack_.push(op);
     }
     
-    //Convert infix to NPI via shunting-yard algorithm
+    //Convertir en NPI grâce à ShuntingYard
+    //On est vraiment sur l'adaptation de l'algorithme ShuntingYard en C avec la NPI
     NPIExpression convert(const std::string &infix) {
         
-        const char * token = infix.c_str ();
+        const char * unit = infix.c_str ();
         
-        while (token && *token) {
+        while (unit && *unit) {
             
-            while (*token && isspace (*token)) {
+            while (*unit && isspace (*unit)) {
                 
-                ++token;
+                ++unit;
                 
             }
             
-            if (! *token) {
+            if (! *unit) {
                 
                 break;
                 
             }
             
-            if (isdigit (*token)) {
+            if (isdigit (*unit)) {
                 
-                char * next_token = 0;
-                npi_.push (new Token< double >(strtod (token, &next_token)));
-                token = next_token;
+                char * unit_suivant = 0;
+                npi_.push (new Unit< double >(strtod (unit, &unit_suivant)));
+                unit = unit_suivant;
                 
             }
+            
+            //si ce n'est pas un digit, alors c'est une parenthese ou un operateur
             else {
                 
-                char op = *token;
+                char op = *unit;
                 switch (op) {
                     case '(':
-                        handle_left_paren ();
+                        gestion_parenthese_ouvrante();
                         break;
                     case ')':
-                        handle_right_paren ();
+                        gestion_parenthese_fermante();
                         break;
                     default:
-                        handle_op (op);
+                        gestion_operateur(op);
                 }
-                ++token;
+                ++unit;
             }
         }
         while (! op_stack_.empty ()) {
             
-            npi_.push (new Token< char >(op_stack_.top ()));
+            npi_.push (new Unit< char >(op_stack_.top ()));
             op_stack_.pop ();
             
         }
@@ -206,7 +214,7 @@ public:
         
     }
     
-    NPIExpression to_npi () {
+    NPIExpression vers_npi () {
         
         return convert (expr_);
         
@@ -220,6 +228,7 @@ public:
  */
 class Calculatrice {
     
+    //pile d'operands
     std::stack< double > operands_;
     
     double pop () {
@@ -236,14 +245,14 @@ class Calculatrice {
         
     }
     
-    /* Returns the most recent operation result (top of the operand stack) */
+    //retourner le dernier resultat - le haut de la pile operand
     double result () const {
         
         return operands_.top ();
         
     }
     
-    /* Empty the operand stack */
+    //vider la pile operand
     void flush () {
         while (! operands_.empty ()) {
             operands_.pop ();
@@ -252,14 +261,15 @@ class Calculatrice {
     }
     
 protected:
-    /* Process an operand token from the input stream */
+    
+    //ajoute un opernd
     void consume(double value) {
         
         push (value);
         
     }
     
-    /* Process an operator token from the input stream */
+    //ajoute un operateur
     void consume(char op) {
         switch (op) {
             case '+':
@@ -285,43 +295,43 @@ protected:
         }
     }
 public:
-    /*
-     Evaluate expression
-     Note: Expression is expected to be in infix form.
-     */
+    
+    //place au calcul
     double calculate (const std::string& expr) {
         
-        ShuntingYard shunting(expr);
-        NPIExpression npi = shunting.to_npi ();
+        ShuntingYard shunting_yard(expr);
+        NPIExpression npi = shunting_yard.vers_npi ();
         flush ();
         
         while (! npi.empty ()) {
             
-            BaseToken * token = npi.pop ();
-            token->evaluer (this);
-            delete token;
+            BaseUnit * unit = npi.pop ();
+            unit->evaluer (this);
+            delete unit;
             
         }
         
         return result ();
     }
     
-    /* Expose the consume() methods to the Tokens */
-    template< class T > friend class Token;
+    //Utilisation de la methode consumme au unit
+    template< class U > friend class Unit;
 };
 
 
-template< class T >
-void Token< T >::evaluer (Calculatrice * c) { c->consume (token_); }
 
-
+template< class U > void Unit< U >::evaluer (Calculatrice * c) {
+    
+    c->consume (unit_);
+    
+}
 
 
 
 int exercice_8 () {
     
     Calculatrice calcul;
-    std::string equation = "-4+(4-2)*3";
+    std::string equation = "5+5+3/6+(2/(1+4))*6";
     equation = "0"+equation; //ajouter un zero au debut pour valeur negative
     std::cout << calcul.calculate (equation) << std::endl;
     return 0;
