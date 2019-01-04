@@ -6,7 +6,7 @@
 //  Copyright © 2018 Jérôme COFFIN. All rights reserved.
 //
 
-
+#include "Exercise_8.hpp"
 #include <iostream> //Standard input/output
 #include <stack> //Constructs a stack container adaptor object
 #include <vector> //Construit un vecteur
@@ -54,7 +54,6 @@ public:
     Unit (U u) : unit_(u) {}
     
 };
-
 
 
 //Represente une expression en NPI

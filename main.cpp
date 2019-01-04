@@ -9,14 +9,15 @@
 #include <iostream>
 #include "Exercise_7.hpp"
 #include "Exercise_8.hpp"
-#include "Exercise_9_2.hpp"
+#include "Exercise_9.hpp"
+
 using namespace std;
 
 
 //main function
 int main(int argc, const char * argv[]) {
     
-    exercice_9_2();
+    exercise_9();
     
     return 0;
 }
