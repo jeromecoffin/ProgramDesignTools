@@ -17,7 +17,29 @@ using namespace std;
 //main function
 int main(int argc, const char * argv[]) {
     
-    exercise_9();
+    cout << "--- CHOISIR UN EXERCICE : ---" <<endl;
+    cout << "\n7 : pour exercice 7\n8 : pour exercice 8\n9 : pour exercice 9" <<endl;
+    int choix = 0;
+    cin >> choix;
+    cout << "\n";
     
+    switch (choix) {
+        case 7:
+            exercice_7();
+            break;
+            
+        case 8:
+            exercice_8();
+            break;
+            
+        case 9:
+            exercise_9();
+            break;
+            
+        default:
+            break;
+    }
+    
+    cout << "\n";
     return 0;
 }

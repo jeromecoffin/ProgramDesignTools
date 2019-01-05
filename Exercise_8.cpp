@@ -331,8 +331,8 @@ int exercice_8 () {
     
     Calculatrice calcul;
     std::string equation = "5+5+3/6+(2/(1+4))*6";
-    equation = "0"+equation; //ajouter un zero au debut pour valeur negative
-    std::cout << calcul.calculate (equation) << std::endl;
+    std::string zequation = "0"+equation; //ajouter un zero au debut pour valeur negative
+    std::cout << equation << " = " << calcul.calculate (zequation) << std::endl;
     return 0;
     
 }

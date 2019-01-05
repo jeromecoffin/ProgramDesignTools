@@ -39,7 +39,7 @@ int exercice_7(){
     
     float exponential = 0;
     exponential = exp(1, 20);
-    std::cout << exponential << std::endl;
+    std::cout << "exp(x) est " << exponential << std::endl;
     
     return 0;
 }

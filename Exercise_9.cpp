@@ -27,7 +27,7 @@ private:
     int is_conditionnelle; //est mis a 1 si conditionnelle, sinon 0
     int is_affectation; //est mis a 1 si affectation, sinon 0
     std::vector<std::string> vec; //vecteur contenant chaque terme du string d'entree
-
+    
 public:
     
     //afficher un tableau 2D de string
@@ -143,6 +143,11 @@ public:
         return 1;
     }
     
+    unsigned int str2int(const char* str, int h = 0)
+    {
+        return !str[h] ? 5381 : (str2int(str, h+1) * 33) ^ str[h];
+    }
+    
     //lancer une analyse lexicale
     void run(std::string const& instruction){
         
@@ -163,7 +168,30 @@ public:
             
             else{
                 
-                std::cout << " ::= autre\n";
+                if (vec[i]=="="){
+                    
+                    std::cout << " ::= affectation\n";
+                }
+                
+                else if (vec[i]=="?" || vec[i]=="#"){
+                    
+                    std::cout << " ::= condition\n";
+                }
+                
+                else if (vec[i]=="+" || vec[i]=="-"){
+                    
+                    std::cout << " ::= expression\n";
+                }
+                
+                else if (vec[i]=="*" || vec[i]=="/"){
+                    
+                    std::cout << " :== facteur\n";
+                }
+                
+                else{
+                    
+                    std::cout << " ::= autre\n";
+                }
             }
             
         }
@@ -179,8 +207,6 @@ int exercise_9() {
     
     analyseur_lexical analyseur;
     std::string instruction = "A1 = A * 100 + 2 * B";
-    
-    analyseur.store_words(instruction);
     
     analyseur.run(instruction);
     
